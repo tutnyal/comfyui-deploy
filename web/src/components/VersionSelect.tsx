@@ -207,8 +207,10 @@ export function PublicRunOutputs(props: {
       checkStatus(runId).then((res) => {
         console.log(res?.status);
         if (res) setStatus(res.status);
-        if (res && res.status === "success") {
-          const imageURLs = res.outputs[0]?.data.images.map((item: { url: string; }) => {
+        console.log("status_veriosn:" ,res?.outputs[0].data.status); 
+        if (res && res.status === "success" && res?.outputs[0].data.message) {
+          // const imageURLs = res.outputs[0]?.data.message.map((item: { url: string; }) => {
+          const imageURLs = res.outputs[0]?.data.message.map((item: { url: string; }) => {
             return { url: item.url };
           });
           setImage(imageURLs);

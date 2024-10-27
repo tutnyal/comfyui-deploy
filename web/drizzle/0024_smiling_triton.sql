@@ -1,1 +1,0 @@
-ALTER TABLE "comfyui_deploy"."machines" ADD COLUMN "build_machine_instance_id" text;

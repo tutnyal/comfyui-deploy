@@ -1,1 +1,0 @@
-ALTER TYPE "deployment_environment" ADD VALUE 'public-share';

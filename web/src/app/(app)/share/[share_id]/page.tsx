@@ -104,6 +104,7 @@ export default async function Page({
 
 				<CardContent>
 					<PublicRunOutputs preview={sharedDeployment.showcase_media} />
+					{/* <Base64Image base64String={run.data.message} /> */}
 				</CardContent>
 			</Card>
 		</div>

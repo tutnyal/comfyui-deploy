@@ -382,9 +382,6 @@ def apply_inputs_to_workflow(workflow_api: Any, inputs: Any, sid: str = None):
 
                 if value["class_type"] == "ComfyUIDeployExternalFaceModel":
                     value["inputs"]["face_model_url"] = new_value
-                
-                if value["class_type"] == "ComfyUIDeployExternalVideo":
-                    value["inputs"]["video_url"] = new_value
 
 
 def send_prompt(sid: str, inputs: StreamingPrompt):
@@ -439,10 +436,10 @@ def send_prompt(sid: str, inputs: StreamingPrompt):
 
 @server.PromptServer.instance.routes.post("/comfyui-deploy/run")
 async def comfy_deploy_run(request):
+    # Extract the bearer token from the Authorization header
     data = await request.json()
-    client_id = data.get("client_id")
-    prompt_id = data.get("prompt_id")
 
+    client_id = data.get("client_id")
     # We proxy the request to Comfy Deploy, this is a native run
     if "is_native_run" in data:
         async with aiohttp.ClientSession() as session:
@@ -471,8 +468,7 @@ async def comfy_deploy_run(request):
                 token = parts[1]
 
     # In older version, we use workflow_api, but this has inputs already swapped in nextjs frontend, which is tricky
-    workflow_api = data.get("workflow")
-    # workflow_api = data.get("workflow_api_raw") or data.get("workflow")
+    workflow_api = data.get("workflow_api_raw") or data.get("workflow")
     # The prompt id generated from comfy deploy, can be None
     prompt_id = data.get("prompt_id")
     inputs = data.get("inputs")
@@ -500,32 +496,6 @@ async def comfy_deploy_run(request):
 
     try:
         res = post_prompt(prompt)
-        
-        # If this is RunPod response, process it
-        if "is_runpod" in data:
-            processed_output = await process_runpod_output(res)
-            if processed_output:
-                res = processed_output
-        
-        status = 200
-        if (
-            "node_errors" in res
-            and res["node_errors"] is not None
-            and len(res["node_errors"]) > 0
-        ):
-            status = 400
-            await update_run_with_output(
-                prompt_id, {"error": {**res}}, gpu_event_id=gpu_event_id
-            )
-            if "error" in res:
-                await update_run(prompt_id, Status.FAILED)
-        
-        return web.json_response({
-            "status": status,
-            "outputs": res,
-            "prompt_id": prompt_id
-        })
-      
     except Exception as e:
         error_type = type(e).__name__
         stack_trace_short = traceback.format_exc().strip().split("\n")[-2]
@@ -537,16 +507,40 @@ async def comfy_deploy_run(request):
             {"error": {"error_type": error_type, "stack_trace": stack_trace}},
             gpu_event_id=gpu_event_id,
         )
+        # When there are critical errors, the prompt is actually not run
         await update_run(prompt_id, Status.FAILED)
         return web.Response(
             status=500, reason=f"{error_type}: {e}, {stack_trace_short}"
         )
 
+    status = 200
+
+    if (
+        "node_errors" in res
+        and res["node_errors"] is not None
+        and len(res["node_errors"]) > 0
+    ):
+        # Even tho there are node_errors it can still be run
+        status = 400
+        await update_run_with_output(
+            prompt_id, {"error": {**res}}, gpu_event_id=gpu_event_id
+        )
+
+        # When there are critical errors, the prompt is actually not run
+        if "error" in res:
+            await update_run(prompt_id, Status.FAILED)
+
+    # return web.json_response(res, status=status)
+    return web.json_response({
+        "status": status,
+        "outputs": res,  # Your image outputs
+        "prompt_id": prompt_id
+    })
+
 
 async def stream_prompt(data, token):
     # In older version, we use workflow_api, but this has inputs already swapped in nextjs frontend, which is tricky
-    workflow_api = data.get("workflow")
-    # workflow_api = data.get("workflow_api_raw" ) or data.get("workflow")
+    workflow_api = data.get("workflow_api_raw" ) or data.get("workflow")
     # The prompt id generated from comfy deploy, can be None
     prompt_id = data.get("prompt_id")
     inputs = data.get("inputs")
@@ -1037,6 +1031,7 @@ async def websocket_handler(request):
 async def comfy_deploy_check_status(request):
     prompt_id = request.rel_url.query.get("prompt_id", None)
     if prompt_id in prompt_metadata:
+        print(f"{"status": prompt_metadata[prompt_id].status.value}")
         return web.json_response({"status": prompt_metadata[prompt_id].status.value})
     else:
         return web.json_response({"message": "prompt_id not found"})
@@ -1314,62 +1309,6 @@ async def update_run_ws_event(prompt_id: str, event: str, data: dict):
     }
     await async_request_with_retry("POST", status_endpoint, token=token, json=body)
 
-# Add this function to handle RunPod specific responses
-async def process_runpod_response(data, prompt_id):
-    """
-    Process RunPod specific response format and convert it to expected format
-    """
-    if not data or "output" not in data:
-        return data
-        
-    output = data["output"]
-    
-    # If output contains image data directly
-    if isinstance(output, dict) and ("image" in output or "images" in output):
-        images = output.get("images") or [output.get("image")]
-        return {
-            "images": images,
-            "prompt_id": prompt_id
-        }
-        
-    # If output is nested in a results structure
-    if isinstance(output, dict) and "results" in output:
-        results = output["results"]
-        if isinstance(results, list) and len(results) > 0:
-            images = []
-            for result in results:
-                if isinstance(result, dict) and ("image" in result or "images" in result):
-                    images.extend(result.get("images", []) or [result.get("image")])
-            return {
-                "images": images,
-                "prompt_id": prompt_id
-            }
-            
-    return data
-
-async def process_runpod_output(output_data):
-    """Process RunPod output format into the expected format"""
-    try:
-        if not output_data:
-            return None
-            
-        # Handle different possible output structures
-        if isinstance(output_data, dict):
-            # Direct image output
-            if "image" in output_data:
-                return {"images": [output_data["image"]]}
-            # Array of images
-            if "images" in output_data:
-                return {"images": output_data["images"]}
-            # Nested output structure
-            if "output" in output_data:
-                return process_runpod_output(output_data["output"])
-                
-        return output_data
-    except Exception as e:
-        logger.error(f"Error processing RunPod output: {e}")
-        return None
-    
 
 async def update_run(prompt_id: str, status: Status):
     global last_read_line_number
@@ -1769,11 +1708,10 @@ async def handle_upload(
     # Execute all upload tasks concurrently
     await asyncio.gather(*upload_tasks)
 
-print(f"📍 Status endpoint configured as: {status_endpoint}")
 
-async def upload_in_background(prompt_id, data, node_id=None, have_upload=False, node_meta=None):
-    print(f"🚀 Starting upload for prompt_id: {prompt_id}")
-    print(f"🚀 Data to upload: {data}")
+async def upload_in_background(
+    prompt_id: str, data, node_id=None, have_upload=True, node_meta=None
+):
     try:
         # await handle_upload(prompt_id, data, 'images', "content_type", "image/png")
         # await handle_upload(prompt_id, data, 'files', "content_type", "image/png")

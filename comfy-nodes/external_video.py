@@ -748,36 +748,51 @@ class ComfyUIDeployExternalVideo:
                 file_parts = f.split(".")
                 if len(file_parts) > 1 and (file_parts[-1] in video_extensions):
                     files.append(f)
-        return {"required": {
-                    "input_id": (
-                        "STRING",
-                        {"multiline": False, "default": "input_video"},
-                    ),
-                     "force_rate": ("INT", {"default": 0, "min": 0, "max": 60, "step": 1}),
-                     "force_size": (["Disabled", "Custom Height", "Custom Width", "Custom", "256x?", "?x256", "256x256", "512x?", "?x512", "512x512"],),
-                     "custom_width": ("INT", {"default": 512, "min": 0, "max": DIMMAX, "step": 8}),
-                     "custom_height": ("INT", {"default": 512, "min": 0, "max": DIMMAX, "step": 8}),
-                     "frame_load_cap": ("INT", {"default": 0, "min": 0, "max": BIGMAX, "step": 1}),
-                     "skip_first_frames": ("INT", {"default": 0, "min": 0, "max": BIGMAX, "step": 1}),
-                     "select_every_nth": ("INT", {"default": 1, "min": 1, "max": BIGMAX, "step": 1}),
-                     },
-                "optional": {
-                    "meta_batch": ("VHS_BatchManager",),
-                    "vae": ("VAE",),
-                    "default_video": (sorted(files),),
-                    "display_name": (
-                        "STRING",
-                        {"multiline": False, "default": ""},
-                    ),
-                    "description": (
-                        "STRING",
-                        {"multiline": True, "default": ""},
-                    ),
-                },
-                "hidden": {
-                    "unique_id": "UNIQUE_ID"
-                },
-                }
+
+        return {
+            "required": {
+                "input_id": (
+                    "STRING",
+                    {"multiline": False, "default": ""},
+                ),
+                "force_rate": ("INT", {"default": 0, "min": 0, "max": 60, "step": 1}),
+                "force_size": (
+                    [
+                        "Disabled",
+                        "Custom Height",
+                        "Custom Width",
+                        "Custom",
+                        "256x?",
+                        "?x256",
+                        "256x256",
+                        "512x?",
+                        "?x512",
+                        "512x512",
+                    ],
+                ),
+                "custom_width": ("INT", {"default": 512, "min": 0, "max": DIMMAX, "step": 8}),
+                "custom_height": ("INT", {"default": 512, "min": 0, "max": DIMMAX, "step": 8}),
+                "frame_load_cap": ("INT", {"default": 0, "min": 0, "max": BIGMAX, "step": 1}),
+                "skip_first_frames": ("INT", {"default": 0, "min": 0, "max": BIGMAX, "step": 1}),
+                "select_every_nth": ("INT", {"default": 1, "min": 1, "max": BIGMAX, "step": 1}),
+            },
+            "optional": {
+                "meta_batch": ("VHS_BatchManager",),
+                "vae": ("VAE",),
+                "default_video": (sorted(files) if files else ["NONE"],),
+                "display_name": (
+                    "STRING",
+                    {"multiline": False, "default": ""},
+                ),
+                "description": (
+                    "STRING",
+                    {"multiline": True, "default": ""},
+                ),
+            },
+            "hidden": {
+                "unique_id": "UNIQUE_ID"
+            },
+        }
 
     CATEGORY = "Video Helper Suite 🎥🅥🅗🅢"
 
@@ -793,72 +808,85 @@ class ComfyUIDeployExternalVideo:
     FUNCTION = "load_video"
 
     def load_video(self, **kwargs):
-        input_id = kwargs.get("input_id")
-        force_rate = kwargs.get("force_rate")
-        force_size = kwargs.get("force_size", "Disabled")
-        custom_width = kwargs.get("custom_width")
-        custom_height = kwargs.get("custom_height")
-        frame_load_cap = kwargs.get("frame_load_cap")
-        skip_first_frames = kwargs.get("skip_first_frames")
-        select_every_nth = kwargs.get("select_every_nth")
-        meta_batch = kwargs.get("meta_batch")
-        unique_id = kwargs.get("unique_id")
+        input_id = kwargs.get("input_id", "").strip()
+        video_path = None
 
-
-        input_dir = folder_paths.get_input_directory()
-        if input_id.startswith("http"):
+        if input_id.startswith(("http://", "https://")):
+            # Handle URL case
             import requests
-
-            print("Fetching video from URL: ", input_id)
+            print(f"Fetching video from URL: {input_id}")
+            
+            input_dir = folder_paths.get_input_directory()
             response = requests.get(input_id, stream=True)
             file_size = int(response.headers.get("Content-Length", 0))
-            file_extension = input_id.split(".")[-1].split("?")[
-                0
-            ]  # Extract extension and handle URLs with parameters
+            
+            # Get extension from URL or default to .mp4
+            file_extension = input_id.split(".")[-1].split("?")[0].lower()
             if file_extension not in video_extensions:
-                file_extension = ".mp4"
-
-            unique_filename = str(uuid.uuid4()) + "." + file_extension
+                file_extension = "mp4"
+            
+            unique_filename = f"{str(uuid.uuid4())}.{file_extension}"
             video_path = os.path.join(input_dir, unique_filename)
-            chunk_size = 1024  # 1 Kibibyte
-
-            num_bars = int(file_size / chunk_size)
-
+            
+            # Download the file with progress bar
             with open(video_path, "wb") as out_file:
                 for chunk in tqdm(
-                    response.iter_content(chunk_size=chunk_size),
-                    total=num_bars,
+                    response.iter_content(chunk_size=1024),
+                    total=file_size // 1024,
                     unit="KB",
-                    desc="Downloading",
-                    leave=True,
+                    desc="Downloading video"
                 ):
                     out_file.write(chunk)
         else:
-            video = kwargs.get("default_video", None)
-            if video is None:
-                raise "No default video given and no external video provided"
-            video_path = folder_paths.get_annotated_filepath(video.strip('"'))
+            # Handle default_video case
+            default_video = kwargs.get("default_video")
+            if not default_video or default_video[0] == "NONE":
+                raise ValueError("No URL provided and no default video available")
+            
+            video_path = os.path.join(folder_paths.get_input_directory(), default_video[0])
+            if not os.path.isfile(video_path):
+                raise FileNotFoundError(f"Default video file not found: {video_path}")
 
+        # Process the video
         return load_video_cv(
             video=video_path,
-            force_rate=force_rate,
-            force_size=force_size,
-            custom_width=custom_width,
-            custom_height=custom_height,
-            frame_load_cap=frame_load_cap,
-            skip_first_frames=skip_first_frames,
-            select_every_nth=select_every_nth,
-            meta_batch=meta_batch,
-            unique_id=unique_id,
+            force_rate=kwargs.get("force_rate", 0),
+            force_size=kwargs.get("force_size", "Disabled"),
+            custom_width=kwargs.get("custom_width", 512),
+            custom_height=kwargs.get("custom_height", 512),
+            frame_load_cap=kwargs.get("frame_load_cap", 0),
+            skip_first_frames=kwargs.get("skip_first_frames", 0),
+            select_every_nth=kwargs.get("select_every_nth", 1),
+            meta_batch=kwargs.get("meta_batch"),
+            unique_id=kwargs.get("unique_id"),
         )
 
     @classmethod
-    def IS_CHANGED(s, video, **kwargs):
-        image_path = folder_paths.get_annotated_filepath(video)
-        return calculate_file_hash(image_path)
+    def IS_CHANGED(s, **kwargs):
+        input_id = kwargs.get("input_id", "").strip()
+        if input_id.startswith(("http://", "https://")):
+            return float("nan")  # Always process URLs
+        
+        default_video = kwargs.get("default_video")
+        if not default_video or default_video[0] == "NONE":
+            return float("nan")
+            
+        try:
+            video_path = os.path.join(folder_paths.get_input_directory(), default_video[0])
+            return calculate_file_hash(video_path)
+        except:
+            return float("nan")
 
+# Register the node
+NODE_CLASS_MAPPINGS = {
+    "ComfyUIDeployExternalVideo": ComfyUIDeployExternalVideo
+}
 
-NODE_CLASS_MAPPINGS = {"ComfyUIDeployExternalVideo": ComfyUIDeployExternalVideo}
 NODE_DISPLAY_NAME_MAPPINGS = {
     "ComfyUIDeployExternalVideo": "External Video (ComfyUI Deploy x VHS)"
 }
+
+# NODE_CLASS_MAPPINGS = {"ComfyUIDeployExternalVideo": ComfyUIDeployExternalVideo}
+# NODE_DISPLAY_NAME_MAPPINGS = {
+#     "ComfyUIDeployExternalVideo": "External Video (ComfyUI Deploy x VHS)"
+# }

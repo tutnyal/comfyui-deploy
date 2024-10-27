@@ -88,7 +88,7 @@ export function RunWorkflowInline({
         >
           <div className="flex justify-end">
             <AutoFormSubmit disabled={isLoading || loading}>
-              Run
+              Run Workflow
               {isLoading || loading ? <LoadingIcon /> : <Play size={14} />}
             </AutoFormSubmit>
           </div>

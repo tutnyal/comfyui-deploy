@@ -1,1 +1,1 @@
-config = {"name": "my-app", "deploy_test": "True", "gpu": "T4"}
+config = {"name": "my-app", "deploy_test": "True", "gpu": "T4", "platform": "runpod"}

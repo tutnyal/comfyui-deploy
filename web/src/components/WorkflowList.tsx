@@ -164,6 +164,19 @@ export const columns: ColumnDef<WorkflowItemList>[] = [
       );
     },
   },
+  // {
+  //   accessorKey: "output",
+  //   header: "Output",
+  //   cell: ({ row }) => {
+  //     const workflow = row.original;
+  //     return (
+  //       <WorkflowImageDisplay 
+  //         workflowId={workflow.id} 
+  //         version={workflow.versions[0]?.version} 
+  //       />
+  //     );
+  //   },
+  // },
 ];
 
 export function WorkflowList({ data }: { data: WorkflowItemList[] }) {
@@ -174,6 +187,11 @@ export function WorkflowList({ data }: { data: WorkflowItemList[] }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  // Add this log in WorkflowList component
+  React.useEffect(() => {
+    console.log('Workflow data:', data);
+  }, [data]);
 
   const table = useReactTable({
     data,

@@ -1,1 +1,0 @@
-ALTER TABLE "comfyui_deploy"."deployments" ADD COLUMN "org_id" text;

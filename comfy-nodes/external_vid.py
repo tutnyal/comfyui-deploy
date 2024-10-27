@@ -7,7 +7,7 @@ from tqdm import tqdm
 video_extensions = ["webm", "mp4", "mkv", "gif"]
 
 
-class ComfyUIDeployExternalVideo:
+class ComfyUIDeployExternalVid:
     @classmethod
     def INPUT_TYPES(s):
         input_dir = folder_paths.get_input_directory()
@@ -72,7 +72,7 @@ class ComfyUIDeployExternalVideo:
         return (video_path,)
 
 
-NODE_CLASS_MAPPINGS = {"ComfyUIDeployExternalVid": ComfyUIDeployExternalVideo}
+NODE_CLASS_MAPPINGS = {"ComfyUIDeployExternalVid": ComfyUIDeployExternalVid}
 NODE_DISPLAY_NAME_MAPPINGS = {
     "ComfyUIDeployExternalVid": "External Video (ComfyUI Deploy) path"
 }

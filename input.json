@@ -1,0 +1,263 @@
+// {
+//   "input": {
+//     "workflow": {
+//       "6": {
+//         "inputs": {
+//           "aaa": 0,
+//           "eee": 0,
+//           "woo": 0,
+//           "wink": 0,
+//           "blink": 5,
+//           "smile": 0,
+//           "eyebrow": 0,
+//           "pupil_x": 15,
+//           "pupil_y": 0,
+//           "src_image": ["27", 0],
+//           "src_ratio": 1,
+//           "rotate_yaw": 14.5,
+//           "crop_factor": 2,
+//           "rotate_roll": 0,
+//           "rotate_pitch": 8.5,
+//           "sample_parts": "OnlyExpression",
+//           "sample_ratio": 1
+//         },
+//         "class_type": "ExpressionEditor"
+//       },
+//       "7": {
+//         "inputs": {
+//           "command": "",
+//           "turn_on": true,
+//           "src_images": ["6", 0],
+//           "crop_factor": 2,
+//           "retargeting_eyes": 0.02,
+//           "tracking_src_vid": true,
+//           "retargeting_mouth": 0.02,
+//           "animate_without_vid": true
+//         },
+//         "class_type": "AdvancedLivePortrait"
+//       },
+//       "27": {
+//         "inputs": {
+//           "input_id": "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/25efc659-e2e2-4db7-a8e8-bd4cccdad000/dgnikzz-7a030c44-f193-4466-95be-72e98d6ab66e.jpg/v1/fill/w_894,h_894,q_70,strp/rapunzel_portrait_by_gaugedphoton_dgnikzz-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAyNCIsInBhdGgiOiJcL2ZcLzI1ZWZjNjU5LWUyZTItNGRiNy1hOGU4LWJkNGNjY2RhZDAwMFwvZGduaWt6ei03YTAzMGM0NC1mMTkzLTQ0NjYtOTViZS03MmU5OGQ2YWI2NmUuanBnIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.-WUxOOMNLFdsngS6eSdqdgqYZ6tV8UwWKcDNWv_44WY",
+//           "description": "face",
+//           "display_name": ""
+//         },
+//         "class_type": "ComfyUIDeployExternalImage"
+//       },
+//       "33": {
+//         "inputs": {
+//           "images": ["7", 0],
+//           "filename_prefix": "LP_noVideo"
+//         },
+//         "class_type": "SaveImage"
+//       }
+//     },
+//     "status_endpoint": "http://localhost:3000/api/update-run",
+//     "file_upload_endpoint": "http://localhost:3000/api/file-upload",
+//     "prompt_id": "258da4b0-b6ca-476e-8f1c-3eb649b72880"
+//   }
+// }
+
+// Sending request to https://api.runpod.ai/v2/kypwnxagdhf87l/run: 
+// {
+//     "input": {
+//       "workflow": {
+//         "6": {
+//           "inputs": {
+//             "aaa": 0,
+//             "eee": 0,
+//             "woo": 0,
+//             "wink": 0,
+//             "blink": 5,
+//             "smile": 0,
+//             "eyebrow": 0,
+//             "pupil_x": 15,
+//             "pupil_y": 0,
+//             "src_image": [
+//               "26",
+//               0
+//             ],
+//             "src_ratio": 1,
+//             "rotate_yaw": 14.5,
+//             "crop_factor": 2,
+//             "rotate_roll": 0,
+//             "rotate_pitch": 8.5,
+//             "sample_parts": "OnlyExpression",
+//             "sample_ratio": 1
+//           },
+//           "class_type": "ExpressionEditor"
+//         },
+//         "7": {
+//           "inputs": {
+//             "command": "",
+//             "turn_on": true,
+//             "src_images": [
+//               "6",
+//               0
+//             ],
+//             "crop_factor": 2,
+//             "motion_link": [
+//               "6",
+//               1
+//             ],
+//             "driving_images": [
+//               "27",
+//               0
+//             ],
+//             "retargeting_eyes": 0.02,
+//             "tracking_src_vid": true,
+//             "retargeting_mouth": 0.02,
+//             "animate_without_vid": true
+//           },
+//           "class_type": "AdvancedLivePortrait"
+//         },
+//         "24": {
+//           "inputs": {
+//             "crf": 19,
+//             "format": "video/h264-mp4",
+//             "images": [
+//               "7",
+//               0
+//             ],
+//             "pix_fmt": "yuv420p",
+//             "pingpong": false,
+//             "frame_rate": 8,
+//             "loop_count": 0,
+//             "save_output": true,
+//             "save_metadata": true,
+//             "filename_prefix": "AnimateDiff"
+//           },
+//           "class_type": "VHS_VideoCombine"
+//         },
+//         "26": {
+//           "inputs": {
+//             "input_id": "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/25efc659-e2e2-4db7-a8e8-bd4cccdad000/dgnikzz-7a030c44-f193-4466-95be-72e98d6ab66e.jpg/v1/fill/w_894,h_894,q_70,strp/rapunzel_portrait_by_gaugedphoton_dgnikzz-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAyNCIsInBhdGgiOiJcL2ZcLzI1ZWZjNjU5LWUyZTItNGRiNy1hOGU4LWJkNGNjY2RhZDAwMFwvZGduaWt6ei03YTAzMGM0NC1mMTkzLTQ0NjYtOTViZS03MmU5OGQ2YWI2NmUuanBnIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.-WUxOOMNLFdsngS6eSdqdgqYZ6tV8UwWKcDNWv_44WY",
+//             "description": "",
+//             "display_name": "Image"
+//           },
+//           "class_type": "ComfyUIDeployExternalImage"
+//         },
+//         "27": {
+//           "inputs": {
+//             "input_id": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c1f10d33-996e-4deb-98fc-ef3eb53b4dab/transcode=true,original=true,quality=90/35530526.webm",
+//             "force_rate": 0,
+//             "force_size": "Disabled",
+//             "description": "",
+//             "custom_width": 512,
+//             "display_name": "VHS",
+//             "custom_height": 512,
+//             "default_video": "5.mp4",
+//             "frame_load_cap": 0,
+//             "select_every_nth": 1,
+//             "skip_first_frames": 0
+//           },
+//           "class_type": "ComfyUIDeployExternalVideo"
+//         }
+//       },
+//       "status_endpoint": "http://localhost:3000/api/update-run",
+//       "file_upload_endpoint": "http://localhost:3000/api/file-upload",
+//       "prompt_id": "dbafa947-958b-4937-b03a-9d53902c615e"
+//     }
+//   }
+
+//   {
+//     "input": {
+//       "workflow": {
+//         "6": {
+//           "inputs": {
+//             "aaa": 0,
+//             "eee": 0,
+//             "woo": 0,
+//             "wink": 0,
+//             "blink": 5,
+//             "smile": 0,
+//             "eyebrow": 0,
+//             "pupil_x": 15,
+//             "pupil_y": 0,
+//             "src_image": [
+//               "26",
+//               0
+//             ],
+//             "src_ratio": 1,
+//             "rotate_yaw": 14.5,
+//             "crop_factor": 2,
+//             "rotate_roll": 0,
+//             "rotate_pitch": 8.5,
+//             "sample_parts": "OnlyExpression",
+//             "sample_ratio": 1
+//           },
+//           "class_type": "ExpressionEditor"
+//         },
+//         "7": {
+//           "inputs": {
+//             "command": "",
+//             "turn_on": true,
+//             "src_images": [
+//               "6",
+//               0
+//             ],
+//             "crop_factor": 2,
+//             "motion_link": [
+//               "6",
+//               1
+//             ],
+//             "driving_images": [
+//               "27",
+//               0
+//             ],
+//             "retargeting_eyes": 0.02,
+//             "tracking_src_vid": true,
+//             "retargeting_mouth": 0.02,
+//             "animate_without_vid": true
+//           },
+//           "class_type": "AdvancedLivePortrait"
+//         },
+//         "24": {
+//           "inputs": {
+//             "crf": 19,
+//             "format": "video/h264-mp4",
+//             "images": [
+//               "7",
+//               0
+//             ],
+//             "pix_fmt": "yuv420p",
+//             "pingpong": false,
+//             "frame_rate": 8,
+//             "loop_count": 0,
+//             "save_output": true,
+//             "save_metadata": true,
+//             "filename_prefix": "AnimateDiff"
+//           },
+//           "class_type": "VHS_VideoCombine"
+//         },
+//         "26": {
+//           "inputs": {
+//             "input_id": "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/25efc659-e2e2-4db7-a8e8-bd4cccdad000/dgnikzz-7a030c44-f193-4466-95be-72e98d6ab66e.jpg/v1/fill/w_894,h_894,q_70,strp/rapunzel_portrait_by_gaugedphoton_dgnikzz-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAyNCIsInBhdGgiOiJcL2ZcLzI1ZWZjNjU5LWUyZTItNGRiNy1hOGU4LWJkNGNjY2RhZDAwMFwvZGduaWt6ei03YTAzMGM0NC1mMTkzLTQ0NjYtOTViZS03MmU5OGQ2YWI2NmUuanBnIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.-WUxOOMNLFdsngS6eSdqdgqYZ6tV8UwWKcDNWv_44WY",
+//             "description": "",
+//             "display_name": "Image"
+//           },
+//           "class_type": "ComfyUIDeployExternalImage"
+//         },
+//         "27": {
+//           "inputs": {
+//             "input_id": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c1f10d33-996e-4deb-98fc-ef3eb53b4dab/transcode=true,original=true,quality=90/35530526.webm",
+//             "force_rate": 0,
+//             "force_size": "Disabled",
+//             "description": "",
+//             "custom_width": 512,
+//             "display_name": "VHS",
+//             "custom_height": 512,
+//             "default_video": "10.mp4",
+//             "frame_load_cap": 0,
+//             "select_every_nth": 1,
+//             "skip_first_frames": 0
+//           },
+//           "class_type": "ComfyUIDeployExternalVideo"
+//         }
+//       },
+//       "status_endpoint": "http://localhost:3000/api/update-run",
+//       "file_upload_endpoint": "http://localhost:3000/api/file-upload",
+//       "prompt_id": "37b3959c-4ef0-4d13-8ec3-b399042e09fb"
+//     }
+//   }
+

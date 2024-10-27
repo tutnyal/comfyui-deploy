@@ -1,1 +1,0 @@
-ALTER TABLE "comfyui_deploy"."auth_requests" ADD COLUMN "expired_date" timestamp;

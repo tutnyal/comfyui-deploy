@@ -1,1 +1,0 @@
-ALTER TABLE "comfyui_deploy"."machines" ADD COLUMN "disabled" boolean DEFAULT false NOT NULL;

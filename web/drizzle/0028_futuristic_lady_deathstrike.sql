@@ -1,1 +1,0 @@
-ALTER TYPE "workflow_run_origin" ADD VALUE 'public-share';

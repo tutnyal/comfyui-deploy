@@ -1,5 +1,5 @@
 """
-@author: BennyKok
+@author: Tutnyal
 @title: comfyui-deploy
 @nickname: Comfy Deploy
 @description: 

@@ -10,6 +10,9 @@
   "spellright.documentTypes": ["markdown", "typescript", "typescriptreact"],
   "tailwindCSS.experimental.classRegex": [
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  ],
+  "python.analysis.extraPaths": [
+    "./builder/modal-builder/cal_"
   ]
   // "eslint.workingDirectories": [
   //   { "mode": "auto" }

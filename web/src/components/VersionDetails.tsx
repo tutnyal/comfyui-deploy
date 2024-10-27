@@ -50,8 +50,8 @@ export function VersionDetails({
                             <span className="text-orange-500">{nodeType}</span>
                           </div>
                         </Badge>
-                        {/* {nodeType}{" "} */}
-                        {/* <Button variant="outline">Hover</Button> */}
+                        {/* {nodeType}{" "}
+                        <Button variant="outline">Hover</Button> */}
                       </TooltipTrigger>
                       <TooltipContent>
                         Default Value: {defaultValue}

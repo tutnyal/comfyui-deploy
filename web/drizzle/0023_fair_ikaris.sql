@@ -1,1 +1,0 @@
-ALTER TABLE "comfyui_deploy"."machines" ADD COLUMN "models" jsonb;

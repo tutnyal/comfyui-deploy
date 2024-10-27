@@ -9,7 +9,7 @@ export const addMachineSchema = insertMachineSchema.pick({
 });
 
 export const insertCustomMachineSchema = createInsertSchema(machinesTable, {
-  name: (schema) => schema.name.default("My Machine"),
+  name: (schema) => schema.name.default("My aMachine"),
   type: (schema) => schema.type.default("comfy-deploy-serverless"),
   gpu: (schema) => schema.gpu.default("T4"),
   snapshot: (schema) =>

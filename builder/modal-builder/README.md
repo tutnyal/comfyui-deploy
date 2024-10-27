@@ -1,6 +1,6 @@
 # Modal Builder
 
-This is a standalone docker fast api app that will takes in require snapshot of the machine and build it as a new modal apps and returns back the deployment url.
+This is a standalone docker fast api app that will take in require snapshot of the machine and build it as a new modal apps and returns back the deployment url.
 
 ## Environment variable, get it from you [modal accounts](https://modal.com/bennykok/settings/tokens)
 
@@ -36,8 +36,8 @@ pwsh -Command "iwr https://fly.io/install.ps1 -useb | iex"
 
 ## Set Env Key into Fly.io
 ```
-fly secrets set MODAL_TOKEN_ID=
-fly secrets set MODAL_TOKEN_SECRET=
+fly secrets set MODAL_TOKEN_ID=ak-4AQ0NcoAVm8B8YwoASoPoB
+fly secrets set MODAL_TOKEN_SECRET=as-453rOKSD5oOrvKqnhwPdhv
 ```
 
 ## To deploy
